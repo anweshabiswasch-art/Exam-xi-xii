@@ -1,0 +1,9 @@
+{
+  "name": "wordcraft-functions",
+  "private": true,
+  "dependencies": {
+    "@netlify/functions": "^2.8.2",
+    "firebase-admin": "^12.6.0",
+    "web-push": "^3.6.7"
+  }
+}

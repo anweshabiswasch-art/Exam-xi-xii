@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Uploaded PDFs/notes/images: any signed-in user can read (students
+    // need to view/download materials); only admins can upload.
+    match /materials/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() && request.resource.size < 25 * 1024 * 1024; // 25MB cap
+    }
+  }
+}
